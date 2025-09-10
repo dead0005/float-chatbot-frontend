@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import Map from './Map'; 
+import ArgoChart from './ArgoChart';
 import { Send, Map as MapIcon, BarChart3, Settings, Menu, X, Download, Filter, Info, Moon, Sun, Trash2 } from 'lucide-react';
 
 const Floatchat = () => {
@@ -10,6 +11,7 @@ const Floatchat = () => {
     timestamp: new Date()
   };
 
+  const [selectedFloatId, setSelectedFloatId] = useState(null);
   const [messages, setMessages] = useState([initialMessage]);
   const [inputValue, setInputValue] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -35,7 +37,6 @@ const Floatchat = () => {
     scrollToBottom();
   }, [messages]);
   
-  // Add darkMode class to body
   useEffect(() => {
     if (darkMode) {
       document.body.classList.add('dark');
@@ -98,6 +99,12 @@ const Floatchat = () => {
     setMessages([initialMessage]);
   };
 
+  // Handler for "View Analytics" in map popup
+  const handleViewAnalytics = (floatId) => {
+    setSelectedFloatId(floatId);
+    setActiveView('charts');
+  };
+
   const OceanWavesLogo = ({ size = 32, className = "" }) => (
     <div className={`relative ${className}`} style={{ width: size, height: size }}>
       <svg width={size} height={size} viewBox="0 0 64 64" className="drop-shadow-lg">
@@ -120,12 +127,6 @@ const Floatchat = () => {
     "Display temperature anomalies in the Indian Ocean"
   ];
 
-  const ChartsView = () => (
-    <div className={`h-full p-6 overflow-auto ${darkMode ? 'bg-gray-900' : 'bg-gray-50'}`}>
-      {/* ... ChartsView implementation ... */}
-    </div>
-  );
-  
   const SettingsView = () => (
     <div className={`h-full p-6 overflow-auto ${darkMode ? 'bg-gray-900 text-gray-200' : 'bg-gray-50 text-gray-800'}`}>
       <div className="max-w-2xl mx-auto">
@@ -289,8 +290,31 @@ const Floatchat = () => {
               </div>
             </div>
           )}
-          {activeView === 'map' && <Map darkMode={darkMode} mapData={mapData} />}
-          {activeView === 'charts' && <ChartsView />}
+          {activeView === 'map' && (
+            <Map
+              darkMode={darkMode}
+              mapData={mapData}
+              onViewAnalytics={handleViewAnalytics}
+            />
+          )}
+          {activeView === 'charts' && (
+            <ArgoChart
+  darkMode={darkMode}
+  floats={selectedFloatId
+    ? mapData.floats.filter(f => f.id === selectedFloatId).map(f => ({
+        name: f.id,
+        temperature: f.temp,
+        salinity: f.salinity
+      }))
+    : mapData.floats.map(f => ({
+        name: f.id,
+        temperature: f.temp,
+        salinity: f.salinity
+      }))
+  }
+/>
+          )}
+
           {activeView === 'settings' && <SettingsView />}
         </div>
       </div>

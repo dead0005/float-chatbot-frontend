@@ -23,11 +23,45 @@ const Floatchat = () => {
   // Sample data for demo purposes
   const [mapData, setMapData] = useState({
     floats: [
-      { id: 'F001', lat: 20.5, lon: 65.8, temp: 28.5, salinity: 36.2, status: 'active' },
-      { id: 'F002', lat: 15.2, lon: 68.9, temp: 29.1, salinity: 35.8, status: 'active' },
-      { id: 'F003', lat: 12.8, lon: 72.1, temp: 30.2, salinity: 35.4, status: 'inactive' }
-    ]
-  });
+{
+  id: "F001",
+  lat: 20.5,
+  lon: 65.8,
+  temp: 28.5,
+  salinity: 36.2,
+  status: "active",
+  profiles: [
+    { time: "2025-01-01", temperature: 28.5, salinity: 36.2 },
+    { time: "2025-02-01", temperature: 28.1, salinity: 36.0 },
+    { time: "2025-03-01", temperature: 27.9, salinity: 35.9 }
+  ]
+},
+     {
+  id: "F002",
+  lat: 19.4,
+  lon: 68.1,
+  temp: 28.8,
+  salinity: 36.2,
+  status: "active",
+  profiles: [
+    { time: "2025-01-01", temperature: 29.5, salinity: 37.2 },
+    { time: "2025-02-01", temperature: 29.1, salinity: 37.0 },
+    { time: "2025-03-01", temperature: 28.9, salinity: 37.9 }
+  ]
+}, {
+  id: "F003",
+  lat: 18.3,
+  lon: 69.5,
+  temp: 278.5,
+  salinity: 36.2,
+  status: "active",
+  profiles: [
+    { time: "2025-01-01", temperature: 30.5, salinity: 32.2 },
+    { time: "2025-02-01", temperature: 30.1, salinity: 37.0 },
+    { time: "2025-03-01", temperature: 30.9, salinity: 35.9 }
+  ]}
+]
+});
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -298,19 +332,12 @@ const Floatchat = () => {
             />
           )}
           {activeView === 'charts' && (
-            <ArgoChart
+           <ArgoChart
   darkMode={darkMode}
-  floats={selectedFloatId
-    ? mapData.floats.filter(f => f.id === selectedFloatId).map(f => ({
-        name: f.id,
-        temperature: f.temp,
-        salinity: f.salinity
-      }))
-    : mapData.floats.map(f => ({
-        name: f.id,
-        temperature: f.temp,
-        salinity: f.salinity
-      }))
+  floats={
+    selectedFloatId
+      ? [mapData.floats.find(f => f.id === selectedFloatId)]
+      : mapData.floats
   }
 />
           )}
